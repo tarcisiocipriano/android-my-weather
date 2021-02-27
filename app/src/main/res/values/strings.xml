@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">My_Weather</string>
+    <string name="app_name">MyWeather</string>
     <string name="menu_search">Search</string>
     <string name="menu_favorite">Favorite</string>
     <string name="menu_settings">Settings</string>
@@ -12,6 +12,7 @@
 
     <string name="temp_unit">Temperature Unit</string>
     <string name="language">Language</string>
+
     <string name="offline_mode_on">The app will use the cache data</string>
     <string name="offline_mode_off">The app requires a network connection to get data</string>
 </resources>

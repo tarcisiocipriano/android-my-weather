@@ -6,8 +6,8 @@
     </string-array>
 
     <string-array name="temperature_entry_values">
-        <item>metric</item>
-        <item>imperial</item>
+        <item>@string/unit_metric</item>
+        <item>@string/unit_imperial</item>
     </string-array>
 
     <string-array name="language_entries">
@@ -16,7 +16,7 @@
     </string-array>
 
     <string-array name="language_entry_values">
-        <item>EN</item>
-        <item>PT</item>
+        <item>@string/lang_english</item>
+        <item>@string/lang_portuguese</item>
     </string-array>
 </resources>
