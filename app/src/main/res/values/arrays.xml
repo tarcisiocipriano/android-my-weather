@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="temperature_entries">
+        <item>C°</item>
+        <item>F°</item>
+    </string-array>
+
+    <string-array name="temperature_entry_values">
+        <item>metric</item>
+        <item>imperial</item>
+    </string-array>
+
+    <string-array name="language_entries">
+        <item>English (EN)</item>
+        <item>Portuguese (PT)</item>
+    </string-array>
+
+    <string-array name="language_entry_values">
+        <item>EN</item>
+        <item>PT</item>
+    </string-array>
+</resources>

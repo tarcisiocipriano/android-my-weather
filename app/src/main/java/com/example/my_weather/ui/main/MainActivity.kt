@@ -7,6 +7,7 @@ import com.example.my_weather.R
 import com.example.my_weather.databinding.ActivityMainBinding
 import com.example.my_weather.ui.main.favorite.FavoriteFragment
 import com.example.my_weather.ui.main.search.SearchFragment
+import com.example.my_weather.ui.main.settings.SettingsFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -14,7 +15,7 @@ class MainActivity : AppCompatActivity() {
 
     private val searchFragment = SearchFragment()
     private val favoriteFragment = FavoriteFragment()
-    private val settingsFragment = SearchFragment()
+    private val settingsFragment = SettingsFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,8 +38,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun setFragment(fragment: Fragment) {
         supportFragmentManager
-                .beginTransaction()
-                .replace(binding.containerView.id, fragment)
-                .commit()
+            .beginTransaction()
+            .replace(binding.containerView.id, fragment)
+            .addToBackStack(null)
+            .commit()
     }
 }
