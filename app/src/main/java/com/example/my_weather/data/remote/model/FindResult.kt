@@ -18,5 +18,27 @@ data class City(
     var id: Long,
 
     @SerializedName("name")
+    var name: String,
+
+    @SerializedName("sys")
+    var country: Country,
+
+    @SerializedName("weather")
+    var weathers: List<Weather>
+)
+
+data class Country(
+    @SerializedName("country")
     var name: String
+)
+
+data class Weather(
+    @SerializedName("main")
+    var main: String,
+
+    @SerializedName("description")
+    var description: String,
+
+    @SerializedName("icon")
+    var icon: String
 )
