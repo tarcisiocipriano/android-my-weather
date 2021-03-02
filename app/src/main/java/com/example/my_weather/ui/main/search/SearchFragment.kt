@@ -13,11 +13,13 @@ import com.example.my_weather.data.remote.model.FindResult
 import com.example.my_weather.databinding.FragmentSearchBinding
 import com.example.my_weather.extension.isInternetAvailable
 import com.example.my_weather.extension.toPx
+import com.example.my_weather.util.FileUtils
 import com.example.my_weather.util.MarginItemDecoration
 import com.example.my_weather.util.SharedPrefsUtils
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.File
 
 class SearchFragment: Fragment() {
 
@@ -41,6 +43,11 @@ class SearchFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initUi()
+        FileUtils.createEncrypted(
+            this.requireContext(),
+            "secretApiKey",
+            "989c2cec50552dd532208380980ea229"
+        )
     }
 
     private fun findCity() {
@@ -49,7 +56,10 @@ class SearchFragment: Fragment() {
                     binding.edtSearch.text.toString(),
                     SharedPrefsUtils.getString(this.requireContext(), SharedPrefsUtils.UNIT_KEY),
                     SharedPrefsUtils.getString(this.requireContext(), SharedPrefsUtils.LANG_KEY),
-                    "989c2cec50552dd532208380980ea229"
+                    FileUtils.readEncrypted(
+                        this.requireContext(),
+                        File(this.requireContext().filesDir, "secretApiKey")
+                    )
             )
             call.enqueue(object : Callback<FindResult> {
                 override fun onResponse(call: Call<FindResult>, response: Response<FindResult>) {

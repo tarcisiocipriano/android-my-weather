@@ -54,6 +54,9 @@ dependencies {
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
     implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
 
+    // crypto
+    implementation 'androidx.security:security-crypto:1.0.0-rc04'
+
     // coil
     implementation "io.coil-kt:coil:$coil_version"
 
