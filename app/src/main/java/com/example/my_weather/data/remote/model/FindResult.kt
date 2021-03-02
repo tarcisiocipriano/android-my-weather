@@ -17,6 +17,9 @@ data class City(
     @SerializedName("id")
     var id: Long,
 
+    @SerializedName("main")
+    var main: Main,
+
     @SerializedName("name")
     var name: String,
 
@@ -24,7 +27,13 @@ data class City(
     var country: Country,
 
     @SerializedName("weather")
-    var weathers: List<Weather>
+    var weathers: List<Weather>,
+
+    @SerializedName("wind")
+    var wind: Wind,
+
+    @SerializedName("clouds")
+    var clouds: Clouds
 )
 
 data class Country(
@@ -41,4 +50,19 @@ data class Weather(
 
     @SerializedName("icon")
     var icon: String
+)
+
+data class Main(
+    @SerializedName("temp")
+    var temperature: String,
+)
+
+data class Wind(
+    @SerializedName("speed")
+    var speed: Double
+)
+
+data class Clouds(
+    @SerializedName("all")
+    var percentage: Int
 )
