@@ -1,5 +1,6 @@
 package com.example.my_weather.ui.main.search
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -13,6 +14,7 @@ import com.example.my_weather.data.remote.model.FindResult
 import com.example.my_weather.databinding.FragmentSearchBinding
 import com.example.my_weather.extension.isInternetAvailable
 import com.example.my_weather.extension.toPx
+import com.example.my_weather.ui.main.forecast.ForecastActivity
 import com.example.my_weather.util.FileUtils
 import com.example.my_weather.util.MarginItemDecoration
 import com.example.my_weather.util.SharedPrefsUtils
@@ -29,7 +31,16 @@ class SearchFragment: Fragment() {
 
     private lateinit var binding: FragmentSearchBinding
 
-    private val searchAdapter by lazy { SearchAdapter() }
+    private val searchAdapter by lazy { SearchAdapter { city ->
+        val intent = Intent(this.requireContext(), ForecastActivity::class.java)
+        intent.putExtra("cityId", city.id)
+        intent.putExtra("cityName", city.name)
+        intent.putExtra("cityCountry", city.country.name)
+        intent.putExtra("cityTempAmount", city.main.temperature)
+        intent.putExtra("cityTempUnit", SharedPrefsUtils.getTempUnitSearched())
+        intent.putExtra("cityTempIcon", city.weathers[0].icon)
+        startActivity(intent)
+    } }
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -54,20 +65,17 @@ class SearchFragment: Fragment() {
         if (requireContext().isInternetAvailable()) {
             val call = RetrofitManager.getOpenWeatherService().findCity(
                     binding.edtSearch.text.toString(),
-                    SharedPrefsUtils.getString(this.requireContext(), SharedPrefsUtils.UNIT_KEY),
-                    SharedPrefsUtils.getString(this.requireContext(), SharedPrefsUtils.LANG_KEY),
+                    SharedPrefsUtils.getUnitKey(requireContext(), SharedPrefsUtils.UNIT_KEY),
+                    SharedPrefsUtils.getLangKey(requireContext(), SharedPrefsUtils.LANG_KEY),
                     FileUtils.readEncrypted(
-                        this.requireContext(),
-                        File(this.requireContext().filesDir, "secretApiKey")
+                        requireContext(),
+                        File(requireContext().filesDir, "secretApiKey")
                     )
             )
             call.enqueue(object : Callback<FindResult> {
                 override fun onResponse(call: Call<FindResult>, response: Response<FindResult>) {
                     if (response.isSuccessful) {
                         searchAdapter.submitList(response.body()?.cities)
-//                        response.body()?.cities?.forEach {
-//                            Log.d(TAG, "onResponse: $it")
-//                        }
                     } else {
                         Log.w(TAG, "onResponse: ${response.message()} ")
                     }
@@ -91,7 +99,7 @@ class SearchFragment: Fragment() {
 
         binding.btnSearch.setOnClickListener {
             findCity()
-            SharedPrefsUtils.updateTempUnitSearched(this.requireContext())
+            SharedPrefsUtils.updateTempUnitSearched(requireContext())
         }
     }
 

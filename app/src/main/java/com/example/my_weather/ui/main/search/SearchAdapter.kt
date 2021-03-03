@@ -11,7 +11,9 @@ import com.example.my_weather.data.remote.model.City
 import com.example.my_weather.databinding.ItemCityBinding
 import com.example.my_weather.util.SharedPrefsUtils
 
-class SearchAdapter(): ListAdapter<City, SearchAdapter.ViewHolder>(SearchDiff()) {
+class SearchAdapter(
+    private val onItemClick: (City) -> Unit
+): ListAdapter<City, SearchAdapter.ViewHolder>(SearchDiff()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemCityBinding.inflate(
@@ -31,21 +33,27 @@ class SearchAdapter(): ListAdapter<City, SearchAdapter.ViewHolder>(SearchDiff())
         fun bind(city: City) {
             val imgUrl = "http://openweathermap.org/img/wn/${city.weathers[0].icon}@4x.png"
 
-            binding.tvCityName.text = city.name
-            binding.tvCountryName.text = city.country.name
-            binding.tvWeatherCondition.text = city.weathers[0].description
-            binding.ivWeather.load(imgUrl) {
-                  crossfade(true)
-                  placeholder(R.drawable.ic_weather_placeholder)
+            binding.apply {
+                tvCityName.text = city.name
+                tvCountryName.text = city.country.name
+                tvWeatherCondition.text = city.weathers[0].description
+                ivWeather.load(imgUrl) {
+                    crossfade(true)
+                    placeholder(R.drawable.ic_weather_placeholder)
+                }
+                tvTemperatureAmount.text = city.main.temperature
+                tvTemperatureUnit.text = when (SharedPrefsUtils.getTempUnitSearched()) {
+                    "metric" -> "C°"
+                    "imperial" -> "F°"
+                    else -> "C°"
+                }
+                tvCloudPercentage.text = city.clouds.percentage.toString()
+                tvWindSpeed.text = city.wind.speed.toString()
+
+                itemView.setOnClickListener {
+                    onItemClick(city)
+                }
             }
-            binding.tvTemperatureAmount.text = city.main.temperature
-            binding.tvTemperatureUnit.text = when (SharedPrefsUtils.getTempUnitSearched()) {
-                "metric" -> "C°"
-                "imperial" -> "F°"
-                else -> ""
-            }
-            binding.tvCloudPercentage.text = city.clouds.percentage.toString()
-            binding.tvWindSpeed.text = city.wind.speed.toString()
         }
     }
 

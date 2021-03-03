@@ -11,4 +11,6 @@ object RetrofitManager {
         .build()
 
     fun getOpenWeatherService() = instance.create(OpenWeatherService::class.java)
+
+    fun getOpenForecastService() = instance.create(OpenForecastService::class.java)
 }
