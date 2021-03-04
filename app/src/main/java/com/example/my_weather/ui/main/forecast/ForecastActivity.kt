@@ -7,6 +7,8 @@ import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
 import com.example.my_weather.R
+import com.example.my_weather.data.local.DatabaseApp
+import com.example.my_weather.data.local.model.Favorite
 import com.example.my_weather.data.remote.RetrofitManager
 import com.example.my_weather.data.remote.model.ForecastResult
 import com.example.my_weather.databinding.ActivityForecastBinding
@@ -35,6 +37,9 @@ class ForecastActivity : AppCompatActivity() {
     }
 
     private fun initUi() {
+
+        updateFavoriteButton(checkFavorite() == null)
+
         binding.apply {
             val title = "Weather in ${intent.getStringExtra("cityName")}, ${intent.getStringExtra("cityCountry")} "
             val imgUrl = "http://openweathermap.org/img/wn/${intent.getStringExtra("cityTempIcon")}@4x.png"
@@ -50,12 +55,35 @@ class ForecastActivity : AppCompatActivity() {
                 "imperial" -> "F°"
                 else -> "C°"
             }
-        }
 
-        binding.rvForecasts.apply {
-            layoutManager = LinearLayoutManager(this@ForecastActivity)
-            adapter = searchAdapter
-            addItemDecoration(MarginItemDecoration(16.toPx()))
+            btnFavorite.setOnClickListener {
+                val cityId = intent.getLongExtra("cityId", 0)
+                val cityName = intent.getStringExtra("cityName")
+                val cityCountry = intent.getStringExtra("cityCountry")
+
+                val dao = DatabaseApp.getInstance(this@ForecastActivity).getFavoriteDao()
+                val city = dao.getById(cityId)
+
+                if (city == null) {
+                    if (cityName != null && cityCountry != null) {
+                        val favorite = Favorite(cityId, cityName, cityCountry)
+                        dao.insert(favorite)
+                        updateFavoriteButton(false)
+                        Toast.makeText(this@ForecastActivity, "Favorited", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    dao.delete(city)
+                    updateFavoriteButton(true)
+                    Toast.makeText(this@ForecastActivity, "Unfavorited", Toast.LENGTH_SHORT).show()
+                }
+
+            }
+
+            rvForecasts.apply {
+                layoutManager = LinearLayoutManager(this@ForecastActivity)
+                adapter = searchAdapter
+                addItemDecoration(MarginItemDecoration(16.toPx()))
+            }
         }
     }
 
@@ -86,5 +114,18 @@ class ForecastActivity : AppCompatActivity() {
         } else {
             Toast.makeText(this, "No network access", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun updateFavoriteButton(isFavorite: Boolean) {
+        binding.btnFavorite.text = if (isFavorite) {
+            "Favorite"
+        } else {
+            "Unfavorite"
+        }
+    }
+
+    private fun checkFavorite(): Favorite? {
+        val dao = DatabaseApp.getInstance(this@ForecastActivity).getFavoriteDao()
+        return dao.getById(intent.getLongExtra("cityId", 0))
     }
 }
