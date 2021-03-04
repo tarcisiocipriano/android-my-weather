@@ -40,7 +40,7 @@ class FileUtils {
                     EncryptedFile.FileEncryptionScheme.AES256_GCM_HKDF_4KB
             ).build()
 
-            var result = ""
+            lateinit var result: String
 
             encryptedFile.openFileInput().use { inputStream ->
                 result = inputStream.readBytes().decodeToString()

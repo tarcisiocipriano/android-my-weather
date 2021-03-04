@@ -4,27 +4,27 @@
 
     <ListPreference
         android:key="pref_temp_key"
-        android:title="@string/temp_unit"
+        android:title="@string/pref_title_temp_unit"
         android:icon="@drawable/ic_cloud"
-        android:defaultValue="@string/unit_metric"
+        android:defaultValue="@string/pref_unit_value_metric"
         android:entries="@array/temperature_entries"
         android:entryValues="@array/temperature_entry_values"
         app:useSimpleSummaryProvider="true" />
 
     <ListPreference
         android:key="pref_lang_key"
-        android:title="@string/language"
+        android:title="@string/pref_title_language"
         android:icon="@drawable/ic_language"
-        android:defaultValue="@string/lang_english"
+        android:defaultValue="@string/pref_lang_name_english"
         android:entries="@array/language_entries"
         android:entryValues="@array/language_entry_values"
         app:useSimpleSummaryProvider="true" />
 
     <SwitchPreference
         android:key="pref_offline_mode_key"
-        android:title="Offline mode"
+        android:title="@string/pref_title_offline_mode"
         android:icon="@drawable/ic_wifi"
-        android:summaryOn="@string/offline_mode_on"
-        android:summaryOff="@string/offline_mode_off" />
+        android:summaryOn="@string/pref_offline_mode_on"
+        android:summaryOff="@string/pref_offline_mode_off" />
 
 </PreferenceScreen>

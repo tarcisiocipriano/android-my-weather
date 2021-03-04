@@ -14,9 +14,8 @@ import com.example.my_weather.data.remote.model.ForecastResult
 import com.example.my_weather.databinding.ActivityForecastBinding
 import com.example.my_weather.extension.isInternetAvailable
 import com.example.my_weather.extension.toPx
-import com.example.my_weather.util.FileUtils
-import com.example.my_weather.util.MarginItemDecoration
-import com.example.my_weather.util.SharedPrefsUtils
+import com.example.my_weather.ui.main.model.CityRaw
+import com.example.my_weather.util.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -26,57 +25,37 @@ class ForecastActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityForecastBinding
 
-    private val searchAdapter by lazy { ForecastAdapter() }
+    private val searchAdapter by lazy { ForecastAdapter(this) }
+
+    private lateinit var cityRaw: CityRaw
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityForecastBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        intent.getParcelableExtra<CityRaw>("cityRaw")?.let {
+            cityRaw = it
+        }
         initUi()
-        listForecasts(intent.getLongExtra("cityId", 0))
+        updateToggleButton(checkFavorite() == null)
+        listForecasts(cityRaw.id)
     }
 
     private fun initUi() {
-
-        updateFavoriteButton(checkFavorite() == null)
-
         binding.apply {
-            val title = "Weather in ${intent.getStringExtra("cityName")}, ${intent.getStringExtra("cityCountry")} "
-            val imgUrl = "http://openweathermap.org/img/wn/${intent.getStringExtra("cityTempIcon")}@4x.png"
-
-            tvForecastTitle.text = title
-            ivForecastWeather.load(imgUrl) {
+            tvForecastTitle.text = this@ForecastActivity.resources.getString(
+                R.string.forecast_title, cityRaw.name, cityRaw.country)
+            ivForecastWeather.load(
+                IconUtils.getWeatherIconUrl(cityRaw.tempIcon)) {
                 crossfade(true)
-                placeholder(R.drawable.ic_weather_placeholder)
-            }
-            tvForecastTemperatureAmount.text = intent.getStringExtra("cityTempAmount")
-            tvForecastTemperatureUnit.text = when (intent.getStringExtra("cityTempUnit")) {
-                "metric" -> "C°"
-                "imperial" -> "F°"
-                else -> "C°"
-            }
+                placeholder(R.drawable.ic_weather_placeholder
+            )}
+            tvForecastTempAmount.text = cityRaw.tempAmount
+            tvForecastTempUnit.text = cityRaw.tempUnit
 
             btnFavorite.setOnClickListener {
-                val cityId = intent.getLongExtra("cityId", 0)
-                val cityName = intent.getStringExtra("cityName")
-                val cityCountry = intent.getStringExtra("cityCountry")
-
-                val dao = DatabaseApp.getInstance(this@ForecastActivity).getFavoriteDao()
-                val city = dao.getById(cityId)
-
-                if (city == null) {
-                    if (cityName != null && cityCountry != null) {
-                        val favorite = Favorite(cityId, cityName, cityCountry)
-                        dao.insert(favorite)
-                        updateFavoriteButton(false)
-                        Toast.makeText(this@ForecastActivity, "Favorited", Toast.LENGTH_SHORT).show()
-                    }
-                } else {
-                    dao.delete(city)
-                    updateFavoriteButton(true)
-                    Toast.makeText(this@ForecastActivity, "Unfavorited", Toast.LENGTH_SHORT).show()
-                }
-
+                toggleFavorite()
             }
 
             rvForecasts.apply {
@@ -87,12 +66,42 @@ class ForecastActivity : AppCompatActivity() {
         }
     }
 
+    private fun checkFavorite(): Favorite? {
+        val dao = DatabaseApp.getInstance(this@ForecastActivity).getFavoriteDao()
+        return dao.getById(cityRaw.id)
+    }
+
+    private fun toggleFavorite() {
+        cityRaw.let {
+            val dao = DatabaseApp.getInstance(this@ForecastActivity).getFavoriteDao()
+            val cityFavorited = dao.getById(cityRaw.id)
+
+            if (cityFavorited == null) {
+                dao.insert(Favorite(it.id, it.name, it.country))
+                updateToggleButton(false)
+                Toast.makeText(this@ForecastActivity, this.resources.getString(R.string.text_favorited), Toast.LENGTH_SHORT).show()
+            } else {
+                dao.delete(cityFavorited)
+                updateToggleButton(true)
+                Toast.makeText(this@ForecastActivity, this.resources.getString(R.string.text_un_favorited), Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun updateToggleButton(isFavorite: Boolean) {
+        binding.btnFavorite.text = if (isFavorite) {
+            this.resources.getString(R.string.text_favorite)
+        } else {
+            this.resources.getString(R.string.text_un_favorite)
+        }
+    }
+
     private fun listForecasts(cityId: Long) {
         if (this.isInternetAvailable()) {
             val call = RetrofitManager.getOpenForecastService().listForecasts(
                 cityId,
-                SharedPrefsUtils.getUnitKey(this@ForecastActivity, SharedPrefsUtils.UNIT_KEY),
-                SharedPrefsUtils.getLangKey(this@ForecastActivity, SharedPrefsUtils.LANG_KEY),
+                SharedPrefsUtils.getUnitKey(this@ForecastActivity),
+                SharedPrefsUtils.getLangKey(this@ForecastActivity),
                 FileUtils.readEncrypted(
                     this@ForecastActivity,
                     File(this@ForecastActivity.filesDir, "secretApiKey")
@@ -116,16 +125,4 @@ class ForecastActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateFavoriteButton(isFavorite: Boolean) {
-        binding.btnFavorite.text = if (isFavorite) {
-            "Favorite"
-        } else {
-            "Unfavorite"
-        }
-    }
-
-    private fun checkFavorite(): Favorite? {
-        val dao = DatabaseApp.getInstance(this@ForecastActivity).getFavoriteDao()
-        return dao.getById(intent.getLongExtra("cityId", 0))
-    }
 }

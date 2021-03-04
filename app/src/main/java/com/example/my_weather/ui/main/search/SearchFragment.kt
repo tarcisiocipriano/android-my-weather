@@ -15,6 +15,7 @@ import com.example.my_weather.databinding.FragmentSearchBinding
 import com.example.my_weather.extension.isInternetAvailable
 import com.example.my_weather.extension.toPx
 import com.example.my_weather.ui.main.forecast.ForecastActivity
+import com.example.my_weather.ui.main.model.CityRaw
 import com.example.my_weather.util.FileUtils
 import com.example.my_weather.util.MarginItemDecoration
 import com.example.my_weather.util.SharedPrefsUtils
@@ -25,22 +26,23 @@ import java.io.File
 
 class SearchFragment: Fragment() {
 
-    companion object {
-        private const val TAG = "SearchFragment"
-    }
-
     private lateinit var binding: FragmentSearchBinding
 
     private val searchAdapter by lazy { SearchAdapter { city ->
         val intent = Intent(this.requireContext(), ForecastActivity::class.java)
-        intent.putExtra("cityId", city.id)
-        intent.putExtra("cityName", city.name)
-        intent.putExtra("cityCountry", city.country.name)
-        intent.putExtra("cityTempAmount", city.main.temperature)
-        intent.putExtra("cityTempUnit", SharedPrefsUtils.getTempUnitSearched())
-        intent.putExtra("cityTempIcon", city.weathers[0].icon)
-        startActivity(intent)
-    } }
+        city.apply {
+            val cityRaw = CityRaw(
+                this.id,
+                this.name,
+                this.country.name,
+                this.main.temperature,
+                SharedPrefsUtils.getTempUnitSearched(),
+                city.weathers[0].icon
+            )
+            intent.putExtra("cityRaw", cityRaw)
+            startActivity(intent)
+        }
+    }}
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -54,6 +56,8 @@ class SearchFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initUi()
+
+        // this will create a encrypted key for the weather api
         FileUtils.createEncrypted(
             this.requireContext(),
             "secretApiKey",
@@ -61,45 +65,44 @@ class SearchFragment: Fragment() {
         )
     }
 
-    private fun findCity() {
-        if (requireContext().isInternetAvailable()) {
-            val call = RetrofitManager.getOpenWeatherService().findCity(
-                    binding.edtSearch.text.toString(),
-                    SharedPrefsUtils.getUnitKey(requireContext(), SharedPrefsUtils.UNIT_KEY),
-                    SharedPrefsUtils.getLangKey(requireContext(), SharedPrefsUtils.LANG_KEY),
-                    FileUtils.readEncrypted(
-                        requireContext(),
-                        File(requireContext().filesDir, "secretApiKey")
-                    )
-            )
-            call.enqueue(object : Callback<FindResult> {
-                override fun onResponse(call: Call<FindResult>, response: Response<FindResult>) {
-                    if (response.isSuccessful) {
-                        searchAdapter.submitList(response.body()?.cities)
-                    } else {
-                        Log.w(TAG, "onResponse: ${response.message()} ")
-                    }
-                }
-
-                override fun onFailure(call: Call<FindResult>, t: Throwable) {
-                    Log.e(TAG, "onFailure: ", t)
-                }
-            })
-        } else {
-            Toast.makeText(requireContext(), "No network access", Toast.LENGTH_SHORT).show()
-        }
-    }
-
     private fun initUi() {
+        binding.btnSearch.setOnClickListener {
+            listCities()
+            SharedPrefsUtils.updateTempUnitSearched(requireContext())
+        }
+
         binding.rvCities.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = searchAdapter
             addItemDecoration(MarginItemDecoration(16.toPx()))
         }
+    }
 
-        binding.btnSearch.setOnClickListener {
-            findCity()
-            SharedPrefsUtils.updateTempUnitSearched(requireContext())
+    private fun listCities() {
+        val q = binding.edtSearchQuery.text.toString()
+        val unit = SharedPrefsUtils.getUnitKey(requireContext())
+        val lang = SharedPrefsUtils.getLangKey(requireContext())
+        val key = FileUtils.readEncrypted(requireContext(),
+            File(requireContext().filesDir, "secretApiKey")
+        )
+
+        if (requireContext().isInternetAvailable()) {
+            val call = RetrofitManager.getOpenWeatherService().findCity(q, unit, lang, key)
+            call.enqueue(object : Callback<FindResult> {
+                override fun onResponse(call: Call<FindResult>, response: Response<FindResult>) {
+                    if (response.isSuccessful) {
+                        searchAdapter.submitList(response.body()?.cities)
+                    } else {
+                        Log.w("SearchFragment", "onResponse: ${response.message()} ")
+                    }
+                }
+
+                override fun onFailure(call: Call<FindResult>, t: Throwable) {
+                    Log.e("SearchFragment", "onFailure: ", t)
+                }
+            })
+        } else {
+            Toast.makeText(requireContext(), "No network access", Toast.LENGTH_SHORT).show()
         }
     }
 

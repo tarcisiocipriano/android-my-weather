@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.my_weather.R
 import com.example.my_weather.data.local.DatabaseApp
 import com.example.my_weather.data.local.model.Favorite
 import com.example.my_weather.databinding.FragmentFavoriteBinding
@@ -61,6 +62,6 @@ class FavoriteFragment: Fragment() {
         val dao = DatabaseApp.getInstance(requireContext()).getFavoriteDao()
         dao.delete(favorite)
         favoriteAdapter.submitList(dao.getAll())
-        Toast.makeText(requireContext(), "Deleted from favorites", Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), this.resources.getString(R.string.text_un_favorited), Toast.LENGTH_SHORT).show()
     }
 }

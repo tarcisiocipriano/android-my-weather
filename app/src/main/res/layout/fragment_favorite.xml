@@ -14,7 +14,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:ems="10"
-        android:hint="Type the city name"
+        android:hint="@string/search_favorite_query_hint"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toStartOf="@+id/btnSearchFavoriteCity"
         app:layout_constraintStart_toStartOf="parent"
@@ -26,7 +26,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:text="Search"
+        android:text="@string/search_query_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -39,5 +39,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edtFavoriteCityName"
-        tools:listitem="@layout/item_favorite_city" />
+        tools:listitem="@layout/item_city_favorite" />
 </androidx.constraintlayout.widget.ConstraintLayout>

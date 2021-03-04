@@ -1,18 +1,42 @@
 <resources>
-    <string name="app_name">MyWeather</string>
+    <string name="app_name">My Weather</string>
+
+    <!--  bottom navigation  -->
     <string name="menu_search">Search</string>
     <string name="menu_favorite">Favorite</string>
     <string name="menu_settings">Settings</string>
 
-    <string name="unit_metric" translatable="false">metric</string>
-    <string name="unit_imperial" translatable="false">imperial</string>
+    <!--  common  -->
+    <string name="text_favorite">Favorite</string>
+    <string name="text_un_favorite">Un-favorite</string>
+    <string name="text_favorited">Favorited</string>
+    <string name="text_un_favorited">Un-favorited</string>
+    <string name="search_query_button">Search</string>
 
-    <string name="lang_english" translatable="false">EN</string>
-    <string name="lang_portuguese" translatable="false">PT</string>
+    <!--  search fragment  -->
+    <string name="search_query_hint">Type the city name</string>
 
-    <string name="temp_unit">Temperature Unit</string>
-    <string name="language">Language</string>
+    <!--  preferences screen  -->
+    <string name="pref_title_temp_unit">Temperature Unit</string>
+    <string name="pref_unit_name_metric" translatable="false">C°</string>
+    <string name="pref_unit_name_imperial" translatable="false">F°</string>
+    <string name="pref_unit_value_metric" translatable="false">metric</string>
+    <string name="pref_unit_value_imperial" translatable="false">imperial</string>
 
-    <string name="offline_mode_on">The app will use the cache data</string>
-    <string name="offline_mode_off">The app requires a network connection to get data</string>
+    <string name="pref_title_language">Language</string>
+    <string name="pref_lang_name_english" translatable="false">EN</string>
+    <string name="pref_lang_name_portuguese" translatable="false">PT</string>
+    <string name="pref_lang_value_english">English (EN)</string>
+    <string name="pref_lang_value_portuguese">Portuguese (PT)</string>
+
+    <string name="pref_title_offline_mode">Offline mode</string>
+    <string name="pref_offline_mode_on">The app will use the cache data</string>
+    <string name="pref_offline_mode_off">The app requires a network connection to get data</string>
+
+    <!--  forecast screen  -->
+    <string name="forecast_title">Weather in %1$s, %2$s</string>
+
+    <!--  settings screen  -->
+    <string name="search_favorite_query_hint">Filter by city or country</string>
+
 </resources>

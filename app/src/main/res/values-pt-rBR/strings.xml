@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Meu Clima</string>
+
+    <!--  bottom navigation  -->
+    <string name="menu_search">Buscar</string>
+    <string name="menu_favorite">Favoritos</string>
+    <string name="menu_settings">Configurações</string>
+
+    <!--  common  -->
+    <string name="text_favorite">Favoritar</string>
+    <string name="text_un_favorite">Desfavoritar</string>
+    <string name="text_favorited">Favoritado</string>
+    <string name="text_un_favorited">Desfavoritado</string>
+
+    <!--  search fragment  -->
+    <string name="search_query_hint">Escreva o nome da cidade</string>
+    <string name="search_query_button">Buscar</string>
+
+    <!--  preferences screen  -->
+    <string name="pref_title_temp_unit">Unidade de temperatura</string>
+
+    <string name="pref_title_language">Idioma</string>
+    <string name="pref_lang_name_english" translatable="false">EN</string>
+    <string name="pref_lang_name_portuguese" translatable="false">PT</string>
+    <string name="pref_lang_value_english">Inglês (EN)</string>
+    <string name="pref_lang_value_portuguese">Português (PT)</string>
+
+    <string name="pref_title_offline_mode">Modo offline</string>
+    <string name="pref_offline_mode_on">O aplicativo vai usar os dados em cache</string>
+    <string name="pref_offline_mode_off">O aplicativo precisa de conexão com a internet para buscar dados</string>
+
+    <!--  forecast screen  -->
+    <string name="forecast_title">Clima em %1$s, %2$s</string>
+
+    <!--  settings screen  -->
+    <string name="search_favorite_query_hint">Filtar por cidade ou país</string>
+
+</resources>

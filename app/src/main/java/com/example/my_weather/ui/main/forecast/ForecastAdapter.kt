@@ -1,6 +1,6 @@
 package com.example.my_weather.ui.main.forecast
 
-import android.annotation.SuppressLint
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -9,14 +9,15 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.example.my_weather.R
 import com.example.my_weather.data.remote.model.Forecast
-import com.example.my_weather.databinding.ItemForecastCityBinding
+import com.example.my_weather.databinding.ItemCityForecastBinding
 import com.example.my_weather.util.DateTimePresenter
+import com.example.my_weather.util.IconUtils
 import com.example.my_weather.util.SharedPrefsUtils
 
-class ForecastAdapter: ListAdapter<Forecast, ForecastAdapter.ViewHolder>(SearchDiff()) {
+class ForecastAdapter(private val context: Context): ListAdapter<Forecast, ForecastAdapter.ViewHolder>(SearchDiff()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemForecastCityBinding.inflate(
+        val binding = ItemCityForecastBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false
@@ -29,27 +30,20 @@ class ForecastAdapter: ListAdapter<Forecast, ForecastAdapter.ViewHolder>(SearchD
         holder.bind(getItem(position))
     }
 
-    inner class ViewHolder(private val binding: ItemForecastCityBinding): RecyclerView.ViewHolder(
+    inner class ViewHolder(private val binding: ItemCityForecastBinding): RecyclerView.ViewHolder(
         binding.root
     ) {
-        @SuppressLint("SimpleDateFormat")
         fun bind(forecast: Forecast) {
-            val imgUrl = "http://openweathermap.org/img/wn/${forecast.weathers[0].icon}@4x.png"
-            val dateTime = DateTimePresenter(forecast.dateTime)
-
             binding.apply {
-                tvForecastDate.text = dateTime.present()
-                ivWeather.load(imgUrl) {
+                val lang = SharedPrefsUtils.getLangKey(context)
+                tvForecastDate.text = DateTimePresenter.present(forecast.dateTime, lang)
+                ivWeatherIcon.load(IconUtils.getWeatherIconUrl(forecast.weathers[0].icon)) {
                     crossfade(true)
                     placeholder(R.drawable.ic_weather_placeholder)
                 }
                 tvWeatherCondition.text = forecast.weathers[0].description
-                tvTemperatureAmount.text = forecast.main.temperature
-                tvTemperatureUnit.text = when (SharedPrefsUtils.getTempUnitSearched()) {
-                    "metric" -> "C°"
-                    "imperial" -> "F°"
-                    else -> "C°"
-                }
+                tvTempAmount.text = forecast.main.temperature
+                tvTempUnit.text = SharedPrefsUtils.getTempUnitSearched()
                 tvCloudPercentage.text = forecast.clouds.percentage.toString()
                 tvWindSpeed.text = forecast.wind.speed.toString()
             }

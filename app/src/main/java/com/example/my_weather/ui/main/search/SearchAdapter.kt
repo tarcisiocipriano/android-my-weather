@@ -9,6 +9,7 @@ import coil.load
 import com.example.my_weather.R
 import com.example.my_weather.data.remote.model.City
 import com.example.my_weather.databinding.ItemCityBinding
+import com.example.my_weather.util.IconUtils
 import com.example.my_weather.util.SharedPrefsUtils
 
 class SearchAdapter(
@@ -31,22 +32,17 @@ class SearchAdapter(
 
     inner class ViewHolder(private val binding: ItemCityBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind(city: City) {
-            val imgUrl = "http://openweathermap.org/img/wn/${city.weathers[0].icon}@4x.png"
-
             binding.apply {
                 tvCityName.text = city.name
                 tvCountryName.text = city.country.name
                 tvWeatherCondition.text = city.weathers[0].description
-                ivWeather.load(imgUrl) {
+                ivWeatherIcon.load(
+                    IconUtils.getWeatherIconUrl(city.weathers[0].icon)) {
                     crossfade(true)
-                    placeholder(R.drawable.ic_weather_placeholder)
-                }
-                tvTemperatureAmount.text = city.main.temperature
-                tvTemperatureUnit.text = when (SharedPrefsUtils.getTempUnitSearched()) {
-                    "metric" -> "C°"
-                    "imperial" -> "F°"
-                    else -> "C°"
-                }
+                    placeholder(R.drawable.ic_weather_placeholder
+                )}
+                tvTempAmount.text = city.main.temperature
+                tvTempUnit.text = SharedPrefsUtils.getTempUnitSearched()
                 tvCloudPercentage.text = city.clouds.percentage.toString()
                 tvWindSpeed.text = city.wind.speed.toString()
 

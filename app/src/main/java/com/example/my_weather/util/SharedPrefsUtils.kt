@@ -10,22 +10,27 @@ class SharedPrefsUtils {
         const val LANG_KEY = "pref_lang_key"
         private var currentTempUnitSearched: String = "metric"
 
-        fun getUnitKey(context: Context, string: String): String {
+        fun getUnitKey(context: Context,): String {
             val sp: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-            return sp.getString(string, "metric")!!
+            return sp.getString(UNIT_KEY, "metric")!!
         }
 
-        fun getLangKey(context: Context, string: String): String {
+        fun getLangKey(context: Context): String {
             val sp: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-            return sp.getString(string, "EN")!!
+            return sp.getString(LANG_KEY, "EN")!!
         }
 
         fun updateTempUnitSearched(context: Context) {
-            currentTempUnitSearched = getLangKey(context, UNIT_KEY)
+            currentTempUnitSearched = getLangKey(context)
         }
 
         fun getTempUnitSearched(): String {
-            return currentTempUnitSearched
+            return when (currentTempUnitSearched) {
+                "metric" -> "C°"
+                "imperial" -> "F°"
+                else -> "C°"
+            }
         }
+
     }
 }

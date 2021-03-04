@@ -7,14 +7,14 @@
     android:layout_height="match_parent">
 
     <EditText
-        android:id="@+id/edtSearch"
+        android:id="@+id/edtSearchQuery"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:ems="10"
-        android:hint="Type a city"
+        android:hint="@string/search_query_hint"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toStartOf="@+id/btnSearch"
         app:layout_constraintStart_toStartOf="parent"
@@ -26,7 +26,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:text="Search"
+        android:text="@string/search_query_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -38,5 +38,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edtSearch" />
+        app:layout_constraintTop_toBottomOf="@+id/edtSearchQuery"
+        tools:listitem="@layout/item_city" />
 </androidx.constraintlayout.widget.ConstraintLayout>
