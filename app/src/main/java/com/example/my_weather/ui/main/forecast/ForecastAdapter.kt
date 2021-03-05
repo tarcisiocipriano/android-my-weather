@@ -42,7 +42,7 @@ class ForecastAdapter(private val context: Context): ListAdapter<Forecast, Forec
                     placeholder(R.drawable.ic_weather_placeholder)
                 }
                 tvWeatherCondition.text = forecast.weathers[0].description
-                tvTempAmount.text = forecast.main.temperature
+                tvTempAmount.text = forecast.main.temperature.toString()
                 tvTempUnit.text = SharedPrefsUtils.getTempUnitSearched()
                 tvCloudPercentage.text = forecast.clouds.percentage.toString()
                 tvWindSpeed.text = forecast.wind.speed.toString()

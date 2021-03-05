@@ -4,5 +4,5 @@ import com.google.gson.annotations.SerializedName
 
 data class Main(
     @SerializedName("temp")
-    var temperature: String,
+    var temperature: Double,
 )

@@ -51,7 +51,7 @@ class ForecastActivity : AppCompatActivity() {
                 crossfade(true)
                 placeholder(R.drawable.ic_weather_placeholder
             )}
-            tvForecastTempAmount.text = cityRaw.tempAmount
+            tvForecastTempAmount.text = cityRaw.tempAmount.toString()
             tvForecastTempUnit.text = cityRaw.tempUnit
 
             btnFavorite.setOnClickListener {

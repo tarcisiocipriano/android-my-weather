@@ -41,7 +41,7 @@ class SearchAdapter(
                     crossfade(true)
                     placeholder(R.drawable.ic_weather_placeholder
                 )}
-                tvTempAmount.text = city.main.temperature
+                tvTempAmount.text = city.main.temperature.toString()
                 tvTempUnit.text = SharedPrefsUtils.getTempUnitSearched()
                 tvCloudPercentage.text = city.clouds.percentage.toString()
                 tvWindSpeed.text = city.wind.speed.toString()

@@ -8,7 +8,7 @@ data class CityRaw(
     val id: Long,
     val name: String,
     val country: String,
-    val tempAmount: String,
+    val tempAmount: Double,
     val tempUnit: String,
     val tempIcon: String
 ): Parcelable

@@ -6,11 +6,12 @@ import androidx.preference.PreferenceManager
 
 class SharedPrefsUtils {
     companion object {
-        const val UNIT_KEY = "pref_temp_key"
-        const val LANG_KEY = "pref_lang_key"
+        private const val UNIT_KEY = "pref_temp_key"
+        private const val LANG_KEY = "pref_lang_key"
+        private const val OFFLINE_MODE_KEY = "pref_offline_mode_key"
         private var currentTempUnitSearched: String = "metric"
 
-        fun getUnitKey(context: Context,): String {
+        fun getUnitKey(context: Context): String {
             val sp: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
             return sp.getString(UNIT_KEY, "metric")!!
         }
@@ -18,6 +19,11 @@ class SharedPrefsUtils {
         fun getLangKey(context: Context): String {
             val sp: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
             return sp.getString(LANG_KEY, "EN")!!
+        }
+
+        fun getOfflineMode(context: Context): Boolean {
+            val sp: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+            return sp.getBoolean(OFFLINE_MODE_KEY, false)
         }
 
         fun updateTempUnitSearched(context: Context) {

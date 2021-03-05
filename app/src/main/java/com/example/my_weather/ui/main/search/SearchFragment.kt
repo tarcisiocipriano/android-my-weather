@@ -9,8 +9,10 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.my_weather.data.local.DatabaseApp
+import com.example.my_weather.data.local.model.CitySearched
 import com.example.my_weather.data.remote.RetrofitManager
-import com.example.my_weather.data.remote.model.FindResult
+import com.example.my_weather.data.remote.model.*
 import com.example.my_weather.databinding.FragmentSearchBinding
 import com.example.my_weather.extension.isInternetAvailable
 import com.example.my_weather.extension.toPx
@@ -79,19 +81,43 @@ class SearchFragment: Fragment() {
     }
 
     private fun listCities() {
-        val q = binding.edtSearchQuery.text.toString()
-        val unit = SharedPrefsUtils.getUnitKey(requireContext())
-        val lang = SharedPrefsUtils.getLangKey(requireContext())
-        val key = FileUtils.readEncrypted(requireContext(),
-            File(requireContext().filesDir, "secretApiKey")
-        )
 
+        if (SharedPrefsUtils.getOfflineMode(requireContext())) {
+            val dao = DatabaseApp.getInstance(requireContext()).getCitySearchedDao()
+            val citiesSearched = dao.getAllFiltered(binding.edtSearchQuery.text.toString())
+            val cities = arrayListOf<City>()
+
+            citiesSearched?.forEach { city ->
+                cities.add(City(
+                    city.id,
+                    Main(city.temp),
+                    city.name,
+                    Country(city.country),
+                    arrayListOf(Weather(city.weather, city.description, city.icon)),
+                    Wind(city.wind),
+                    Clouds(city.clouds)
+                ))
+            }
+
+            searchAdapter.submitList(cities)
+            Toast.makeText(requireContext(), "Offline Mode", Toast.LENGTH_SHORT).show()
+            return
+        }
+        
         if (requireContext().isInternetAvailable()) {
+            val q = binding.edtSearchQuery.text.toString()
+            val unit = SharedPrefsUtils.getUnitKey(requireContext())
+            val lang = SharedPrefsUtils.getLangKey(requireContext())
+            val key = FileUtils.readEncrypted(requireContext(),
+                    File(requireContext().filesDir, "secretApiKey")
+            )
+
             val call = RetrofitManager.getOpenWeatherService().findCity(q, unit, lang, key)
             call.enqueue(object : Callback<FindResult> {
                 override fun onResponse(call: Call<FindResult>, response: Response<FindResult>) {
                     if (response.isSuccessful) {
                         searchAdapter.submitList(response.body()?.cities)
+                        insertCitiesOnDB(response.body()?.cities as ArrayList<City>)
                     } else {
                         Log.w("SearchFragment", "onResponse: ${response.message()} ")
                     }
@@ -104,6 +130,36 @@ class SearchFragment: Fragment() {
         } else {
             Toast.makeText(requireContext(), "No network access", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun insertCitiesOnDB(cities: ArrayList<City>) {
+        val dao = DatabaseApp.getInstance(requireContext()).getCitySearchedDao()
+
+        cities.forEach { city ->
+            val citySaved = dao.getById(city.id)
+            val citySearched: CitySearched
+
+            city.apply {
+                citySearched = CitySearched(
+                    id,
+                    name,
+                    country.name,
+                    main.temperature,
+                    weathers[0].main,
+                    weathers[0].description,
+                    weathers[0].icon,
+                    wind.speed,
+                    clouds.percentage
+                )
+            }
+
+            if (citySaved == null) {
+                dao.insert(citySearched)
+            } else {
+                dao.update(citySearched)
+            }
+        }
+
     }
 
 }
