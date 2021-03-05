@@ -27,7 +27,7 @@ class SharedPrefsUtils {
         }
 
         fun updateTempUnitSearched(context: Context) {
-            currentTempUnitSearched = getLangKey(context)
+            currentTempUnitSearched = getUnitKey(context)
         }
 
         fun getTempUnitSearched(): String {
